@@ -4,8 +4,8 @@
       <div>
         <p>
           当前位置：
-          <a href="index.html">首页</a>&nbsp;/&nbsp;
-          <a href="products.html">产品中心</a>
+          <router-link to="/">首页</router-link>&nbsp;/&nbsp;
+          <router-link to="/productCenter">产品中心</router-link>
         </p>
       </div>
     </div>

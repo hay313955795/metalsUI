@@ -11,6 +11,7 @@ const service = Axios.create({
 });
 service.defaults.retry = Config.requestRetry;
 service.defaults.retryDelay = Config.requestRetryDelay;
+service.defaults.headers['Content-Type']
 
 service.interceptors.request.use(
     config => {
@@ -19,7 +20,7 @@ service.interceptors.request.use(
         //     window.loadingInstance = Loading.service();
         // }
 
-        let noParameters = config.url.indexOf('?') == -1;
+        // let noParameters = config.url.indexOf('?') == -1;
 
         // config.url = noParameters ? config.url+'?access_token=' + getToken(): config.url+'&access_token='+ getToken();
 
@@ -52,34 +53,35 @@ service.interceptors.response.use(
                 return res
             }
 
-            if (res.data.errorCode != 0) {
-                Notification({
-                    title: res.data.message,
-                    type: 'warning'
-                });
-                if (res.data.errorCode == 402) {//登录状态失效
-
-                    // setTimeout(_ => {
-                    //     window.location.href = './login.html';
-                    // }, 2000)
-                }
-                return Promise.reject('error');
-            }
+            // if (res.data.errorCode != 0) {
+            //     Notification({
+            //         title: res.data.message,
+            //         type: 'warning'
+            //     });
+            //     if (res.data.errorCode == 402) {//登录状态失效
+            //
+            //         // setTimeout(_ => {
+            //         //     window.location.href = './login.html';
+            //         // }, 2000)
+            //     }
+            //     return Promise.reject('error');
+            // }
             return res.data
         }
     },
     error => {
-        console.log(error);
+
         // setTimeout(_ => {
         //     window.loadingInstance.close();
         // }, 300)
-        Notification({
-            title: "请求未响应",
-            message: "服务器可能出了点问题",
-            type: 'warning'
-        });
+        // Notification({
+        //     title: "请求未响应",
+        //     message: "服务器可能出了点问题",
+        //     type: 'warning'
+        // });
         return Promise.reject(error)//千万不能去掉，，，否则请求超时会进入到then方法，导致逻辑错误。
     }
-)
+);
+
 
 export default service

@@ -1,94 +1,93 @@
 <template>
-  <div class="products-list">
-    <div>
-      <ul class="pro-case clearfix">
-        <li>
-          <div>
-            <router-link to="/productCenter/productInfo">
-              <img src="../../../assets/images/pro/zwld/D1.jpg">
-              <p>外六角华司钻尾螺钉2</p>
-            </router-link>
-          </div>
-        </li>
-        <li>
-          <div>
-            <router-link to="/productCenter/productInfo">
-              <img src="../../../assets/images/pro/zwld/D2.jpg">
-              <p>小沉头钻尾螺钉</p>
-            </router-link>
-          </div>
-        </li>
-        <li>
-          <div>
-            <router-link to="/productCenter/productInfo">
-              <img src="../../../assets/images/pro/zwld/D3.jpg">
-              <p>小盘头带垫（咖啡色）钻尾螺钉</p>
-            </router-link>
-          </div>
-        </li>
-        <li>
-          <div>
-            <router-link to="/productCenter/productInfo">
-              <img src="../../../assets/images/pro/zwld/D4.jpg">
-              <p>钻尾螺丝</p>
-            </router-link>
-          </div>
-        </li>
-        <li>
-          <div>
-            <router-link to="/productCenter/productInfo">
-              <img src="../../../assets/images/pro/zhld/D1.jpg">
-              <p>GB9074.1</p>
-            </router-link>
-          </div>
-        </li>
-        <li>
-          <div>
-            <router-link to="/productCenter/productInfo">
-              <img src="../../../assets/images/pro/zhld/D2.jpg">
-              <p>十字盘头机螺钉弹垫组合</p>
-            </router-link>
-          </div>
-        </li>
-        <li>
-          <div>
-            <router-link to="/productCenter/productInfo">
-              <img src="../../../assets/images/pro/zhld/D3.jpg">
-              <p>十一字小盘头机螺钉平弹垫</p>
-            </router-link>
-          </div>
-        </li>
-        <li>
-          <div>
-            <router-link to="/productCenter/productInfo">
-              <img src="../../../assets/images/pro/zhld/D4.jpg">
-              <p>钻十字外六角头凹穴机螺钉平尾螺丝</p>
-            </router-link>
-          </div>
-        </li>
-      </ul>
+    <div class="products-list">
+        <div>
+            <p v-if="productList.length===0" class="pro-case clearfix" style="text-align: center;">暂无数据</p>
+            <ul class="pro-case clearfix">
+                <li v-for="product in productList" :key="product.id">
+                    <div>
+                        <router-link :to="{name:'productInfo',query:{id:product.id}}">
+                            <img :src="product.productImg">
+                            <p>{{product.productName}}</p>
+                        </router-link>
+                    </div>
+                </li>
+            </ul>
+            <el-pagination
+                    v-if="productList.length>0"
+                    class="pro-case clearfix"
+                    background
+                    layout="prev, pager, next"
+                    :page-size="limit"
+                    @current-change="currentChange"
+                    @prev-click="prevClick"
+                    @next-click="nextClick"
+                    :total="total">
+            </el-pagination>
+
+        </div>
     </div>
-  </div>
 </template>
 <script>
-export default {
-  data() {
-    return {
-      typeId: 0
+
+    import {UrlSearch} from '../../../utils/getParam'
+    import {getProductByType} from "../../../api/product";
+
+    export default {
+        data() {
+            return {
+                typeId: 1,
+                productList: [],
+                total: 0,
+                page: 1,
+                limit: 4
+            };
+        },
+        watch: {
+            typeId: {
+                handler: function () {
+                    if (this.typeId != 0) {
+                        this.findProductByType();
+                    }
+                }
+            }
+        },
+        methods: {
+            findProductByType() {
+                let self = this;
+                if (typeof self.typeId == "undefined") {
+                    self.typeId = 1
+                }
+                let param = self.typeId + '?page=' + self.page + '&limit=' + self.limit;
+                getProductByType(param).then(r => {
+                    self.total = r.data.total;
+                    self.productList = r.data.rows;
+                }).catch()
+            },
+            currentChange(page) {
+                this.page = page;
+                this.findProductByType();
+            },
+            prevClick(page) {
+                this.page = page;
+                this.findProductByType();
+            },
+            nextClick(page) {
+                this.page = page;
+                this.findProductByType();
+            }
+        },
+        beforeRouteUpdate(to, from, next) {
+            this.typeId = to.query.id;
+            next();
+        },
+        mounted() {
+            let id = UrlSearch('id');
+            if (id != 0) {
+                this.typeId = id;
+            }
+            this.findProductByType();
+        }
     };
-  },
-  watch: {
-    typeId: {
-      handler: function() {
-        console.log("参数变化");
-      }
-    }
-  },
-  beforeRouteUpdate(to, from, next) {
-    this.typeId = to.query.id;
-    next();
-  }
-};
 </script>
 <style scoped>
 </style>

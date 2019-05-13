@@ -4,8 +4,8 @@
       <div>
         <p>
           当前位置：
-          <a href="index.html">首页</a>&nbsp;/&nbsp;
-          <a href="contact.html">联系我们</a>
+          <router-link to="/">首页</router-link>&nbsp;/&nbsp;
+          <router-link to="/contact">联系我们</router-link>
         </p>
       </div>
     </div>
